@@ -1,0 +1,51 @@
+server:
+  port: 8889
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+
+        - id: user-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/user/**
+
+        - id: inventoryservice
+          uri: http://localhost:8082
+          predicates:
+            - Path=/v1/inventories/**
+
+        - id: orderservice
+          uri: http://localhost:8081
+          predicates:
+            - Path=/v1/orders/**
+
+        - id: fileservice
+          uri: http://localhost:8086
+          predicates:
+            - Path=/file/**
+
+  discovery:
+    locator:
+      enabled: true
+
+  main:
+    web-application-type: reactive
+
+  eureka:
+    client:
+      register-with-eureka: true
+      service-url:
+        defaultZone: http://localhost:8761/eureka
+      instance:
+        prefer-ip-address: true
